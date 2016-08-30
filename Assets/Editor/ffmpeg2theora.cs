@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Diagnostics;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 public class ffmpeg2theora : EditorWindow
 {
@@ -52,11 +53,18 @@ public class ffmpeg2theora : EditorWindow
 
             this.ShowNotification(new GUIContent("莫慌，编辑器会卡住一段时间！"));
 
-            //ToOGV();
+            Timer timerClose = new Timer(new TimerCallback(ToOGV), this,3000, 0); 
+            //ToOGV();  
         }
     }
 
-    void ToOGV()
+    IEnumerator WaitTime(float time,Action action)
+    {
+        yield return new WaitForSeconds(time);
+        action.Invoke();
+    }
+
+    void ToOGV( object obj)
     { 
         ProcessStartInfo ps = new ProcessStartInfo(@"D:\Github\unityffmpeg2theora\Assets\Editor\ffmpeg2theora.exe",
            filePath);
